@@ -9,11 +9,10 @@ import {
 } from 'react-native';
 import Form from './src/components/Form';
 
-
 function App(): JSX.Element {  
   const [text, onChangeText] = useState('Text');
   const [modalVisibleLoginForm, setModalVisibleLoginForm] = React.useState(false);
-  const [modalVisibleSigInForm, setModalVisibleSigInForm] = React.useState(false); 
+  const [modalRegistro, setModalRegistro] = React.useState(false); 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,16 +37,14 @@ function App(): JSX.Element {
       </Modal>
 
       <Pressable 
-        onPress={() => setModalVisibleSigInForm(true)}           
+        onPress={() => setModalRegistro(true)}           
         style={styles.btnStyleRed}>
         <Text style={styles.btnTxtStyle}>Registro</Text>
       </Pressable>      
-      <Form modalVisibleForm={modalVisibleSigInForm} />
+      <Form modalVisibleForm={modalRegistro} setModalRegistro={setModalRegistro} />
     </SafeAreaView>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -70,6 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(80, 80, 255)',
     padding: 10,
     marginTop: 10,
+    marginBottom: 10,
     marginHorizontal: 10,
     borderRadius: 10,
   },
@@ -77,6 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(255, 80, 80)',
     padding: 10,
     marginTop: 10,
+    marginBottom: 10,
     marginHorizontal: 10,
     borderRadius: 10,
   },
