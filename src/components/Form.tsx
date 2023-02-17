@@ -1,22 +1,25 @@
 import React, {useState} from 'react';
-import {Modal, Text, TextInput, StyleSheet, View, TouchableOpacity, Pressable, SafeAreaView, ScrollView} from 'react-native';
+import {Modal, Text, TextInput, Alert, StyleSheet, View, TouchableOpacity, Pressable, SafeAreaView, ScrollView} from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import BouncyCheckboxGroup, {
   ICheckboxButton,
 } from "react-native-bouncy-checkbox-group";
+import {User, Address} from '../models/User';
+
+let users:User[] = [];
 
 const Form = ({modalVisibleForm, setModalRegistro}) => {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
+  const [user_name, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [birthDate, setBirthDate] = useState(new Date());
+  const [birth_date, setBirthDate] = useState(new Date());
   const [birthDateLabel, setBirthDateLabel] = useState("Fecha de nacimiento");
   const [age, setAge] = useState(0);
   const [email, setEmail] = useState("");      
   const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");  
+  const [code_zip, setCodeZip] = useState("");  
   const [selectedGender, setGender] = useState("");
   const [openDatePicker, setOpenDatePicker] = useState(false);  
 
@@ -25,25 +28,9 @@ const Form = ({modalVisibleForm, setModalRegistro}) => {
     {id: "M", text: "M", textStyle: {textDecorationLine: "none", color: "#fff"}, style: {marginTop: 10, marginRight: 15}},      
     {id: "F", text: "F", textStyle: {textDecorationLine: "none", color: "#fff"}, style: {marginTop: 10, marginRight: 15}}
   ];
-   
-  
-  const handleNewUser = () => {
-    if([userName, birthDate].includes('')){
-      alert("Por favor, llena todos los campos");
-    }
-    const new_user = [
-      name,
-      lastName, 
-      userName, 
-      password, 
-      birthDate, 
-      age, 
-      email, 
-      city, 
-      postalCode, 
-      selectedGender
-    ];
-    setName("aaaaa");
+
+  const clearInputs = () => {
+    setName("");
     setLastName("");
     setUserName("");
     setPassword("");
@@ -52,8 +39,39 @@ const Form = ({modalVisibleForm, setModalRegistro}) => {
     setAge(0);
     setEmail("");
     setCity("");
-    setPostalCode("");
+    setCodeZip("");
     setGender("");    
+  };     
+  
+  const handleNewUser = () => {
+    if([user_name, birth_date].includes('')){
+      Alert.alert('Warning', 'Por favor, llena todos los campos', [
+        {text: 'Aceptar', onPress: () => console.log('OK Pressed')},
+      ]);
+      return;     
+    }
+
+    let address: Address = {city, code_zip};
+    let new_user: User = { user_name, password, birth_date, email, address};
+    let update = false;
+    users.forEach((user, i) => {
+      console.log(user.email);
+      console.log(new_user.email);
+      if(user.email == new_user.email){
+        users[i] = new_user;
+        console.log("Usuario actualizado");
+        console.log(users);
+        //clearInputs();
+        update = true;       
+      }
+    }, users);
+    if(!update){
+      users.push(new_user);
+      console.log("Usuario Registrado");
+      //clearInputs();
+      console.log(users);
+    }
+    
   };
   
   return (
@@ -75,7 +93,7 @@ const Form = ({modalVisibleForm, setModalRegistro}) => {
             <Text style={{color: '#FFF', fontSize: 15, marginLeft: 10, marginTop: 25}}>Genero</Text>        
             <BouncyCheckboxGroup
               style={{ flexDirection: 'row', marginTop: 20, marginLeft: 5 }}
-              data={genders} onChange={function (selectedItem: ICheckboxButton): void {
+              data={genders} onChange={function (selectedItem: ICheckboxButton) {
                 setGender(selectedItem.id.toString());
                 console.log(selectedItem.id.toString());
               }}/>          
@@ -105,7 +123,7 @@ const Form = ({modalVisibleForm, setModalRegistro}) => {
               style={styles.input}            
               placeholder="Codigo Postal"
               placeholderTextColor= "#FFF"  
-              onChangeText={(text) => setPostalCode(text)}/> 
+              onChangeText={(text) => setCodeZip(text)}/> 
             <View style={styles.dateView}>
               <TouchableOpacity onPress={() => setOpenDatePicker(true)}>
                 <Text style={{color: '#FFF', fontSize: 15, marginLeft: 10, marginTop: 25}}>
@@ -116,7 +134,7 @@ const Form = ({modalVisibleForm, setModalRegistro}) => {
             <DatePicker
               modal
               open={openDatePicker}
-              date={birthDate}
+              date={birth_date}
               mode={'date'}            
               onConfirm={date => {         
                 setOpenDatePicker(false)       
@@ -164,7 +182,8 @@ const styles = StyleSheet.create({
     width: 300,
     height: 40,
     paddingHorizontal: 10,
-    borderBottomWidth: 1     
+    borderBottomWidth: 1,
+    color: '#EDA',     
   },    
   dateView: {
     flexDirection: 'row',
@@ -199,7 +218,3 @@ const styles = StyleSheet.create({
 });
 
 export default Form;
-
-function alert(arg0: string) {
-  throw new Error('Function not implemented.');
-}
